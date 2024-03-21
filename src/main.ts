@@ -1,6 +1,7 @@
 import { applyOnColorChange } from "./applyOnColorChange";
 import { ChartWrapper } from "./chart";
 import { formatData } from "./formatData";
+import "./style.css";
 
 import { Chart, registerables } from "chart.js";
 Chart.register(...registerables);
