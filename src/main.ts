@@ -17,7 +17,9 @@ const getDataFromFile = () => {
   fetch(FILE_PATH)
     .then(async (res) => res.text())
     .then((res) => {
+      console.log(res);
       const formattedData = formatData(res);
+      console.log(formattedData);
       createCharts(formattedData);
     });
 };
@@ -27,17 +29,17 @@ const createCharts = (data: number[][]) => {
 
   const maxNumberOfElementsOnChart = maxElements || 1000;
 
-  const voltageColorInput = document.getElementById("voltage-color");
+  // const voltageColorInput = document.getElementById("voltage-color");
   const distanceColorInput = document.getElementById("distance-color");
 
-  const voltageChart = new ChartWrapper({
-    elementId: "voltage-chart",
-    xData: data.map((e) => e[0]),
-    yData: data.map((e) => e[2]),
-    xTitle: "Czas [s]",
-    yTitle: "Napiecie [V]",
-    maxNumberOfElementsOnChart,
-  });
+  // const voltageChart = new ChartWrapper({
+  //   elementId: "voltage-chart",
+  //   xData: data.map((e) => e[0]),
+  //   yData: data.map((e) => e[2]),
+  //   xTitle: "Czas [s]",
+  //   yTitle: "Napiecie [V]",
+  //   maxNumberOfElementsOnChart,
+  // });
 
   const distanceChart = new ChartWrapper({
     elementId: "distance-chart",
@@ -48,9 +50,9 @@ const createCharts = (data: number[][]) => {
     maxNumberOfElementsOnChart,
   });
 
-  if (voltageColorInput) {
-    applyOnColorChange(voltageColorInput, voltageChart);
-  }
+  // if (voltageColorInput) {
+  //   applyOnColorChange(voltageColorInput, voltageChart);
+  // }
 
   if (distanceColorInput) {
     applyOnColorChange(distanceColorInput, distanceChart);
