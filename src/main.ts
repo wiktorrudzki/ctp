@@ -39,7 +39,7 @@ const getDataFromFile = (file:File) => {
 const createCharts = (data: number[][]) => {
 
   
-  /* const previousChartElement = document.getElementById("distance-chart");
+  const previousChartElement = document.getElementById("distance-chart");
   console.log(previousChartElement);
   if (previousChartElement)
   {
@@ -50,8 +50,8 @@ const createCharts = (data: number[][]) => {
     if (previousChart) {
       previousChart.destroy();
     }
-    previousChartElement.remove();
-  } */
+    
+  }
   const maxElements = parseInt(MAX_ELEMENTS);
 
   const maxNumberOfElementsOnChart = maxElements || 1000;
