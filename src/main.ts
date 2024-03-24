@@ -10,21 +10,48 @@ const FILE_PATH = import.meta.env.VITE_FILE_PATH;
 const MAX_ELEMENTS = import.meta.env.VITE_MAX_ELEMENTS;
 
 const init = () => {
-  getDataFromFile();
+  
+  document.getElementById('file-input').addEventListener('change', (event) => {
+    const selectedFile = event.target.files[0];
+    if (selectedFile) {
+      
+      getDataFromFile(selectedFile);
+    }
+  });
 };
 
-const getDataFromFile = () => {
-  fetch(FILE_PATH)
-    .then(async (res) => res.text())
-    .then((res) => {
-      console.log(res);
-      const formattedData = formatData(res);
-      console.log(formattedData);
-      createCharts(formattedData);
-    });
+
+
+const getDataFromFile = (file:File) => {
+  const reader = new FileReader();
+  
+  reader.onload = async (event) => {
+    const fileContent = event.target.result;
+    console.log(fileContent);
+    const formattedData = formatData(fileContent);
+    console.log(formattedData);
+    createCharts(formattedData);
+  };
+  
+  reader.readAsText(file);
 };
 
 const createCharts = (data: number[][]) => {
+
+  
+  /* const previousChartElement = document.getElementById("distance-chart");
+  console.log(previousChartElement);
+  if (previousChartElement)
+  {
+    const previousCanvas = previousChartElement as HTMLCanvasElement;
+    console.log(previousCanvas);
+    const previousChart = Chart.getChart(previousCanvas);
+    console.log(previousChart);
+    if (previousChart) {
+      previousChart.destroy();
+    }
+    previousChartElement.remove();
+  } */
   const maxElements = parseInt(MAX_ELEMENTS);
 
   const maxNumberOfElementsOnChart = maxElements || 1000;
@@ -40,7 +67,7 @@ const createCharts = (data: number[][]) => {
   //   yTitle: "Napiecie [V]",
   //   maxNumberOfElementsOnChart,
   // });
-
+createCharts
   const distanceChart = new ChartWrapper({
     elementId: "distance-chart",
     xData: data.map((e) => e[0]),
@@ -60,4 +87,5 @@ const createCharts = (data: number[][]) => {
 };
 
 init();
+
 
