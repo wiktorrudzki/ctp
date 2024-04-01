@@ -50,6 +50,7 @@ const createCharts = (data: number[][]) => {
     maxNumberOfElementsOnChart,
   });
 
+  // wyswietlenie nazwy wyswietlanego pliku
   if (title) {
     const splitValue = FILE_PATH.split("/");
     const formattedValue = splitValue[splitValue.length - 1];
@@ -68,12 +69,14 @@ const createCharts = (data: number[][]) => {
   const startBtn = document.getElementById("start-chart-btn");
   const fileInput = document.getElementById("file-input") as HTMLInputElement;
 
+  // jak klikniemy w zatrzymaj to automatycznie przycisk staje sie disabled
   stopBtn?.addEventListener("click", () => {
     distanceChart.stopInterval();
     stopBtn.setAttribute("disabled", "disabled");
     startBtn?.removeAttribute("disabled");
   });
 
+  // jak klikniemy w wznow wykres to automatycznie staje sie ten przycisk disabled
   startBtn?.addEventListener("click", () => {
     distanceChart.startInterval();
     startBtn.setAttribute("disabled", "disabled");
@@ -87,11 +90,13 @@ const createCharts = (data: number[][]) => {
 
     function readSuccess(e: ProgressEvent<FileReader>) {
       if (!e.target) {
+        // jakies byle co wrzucilem na razie
         throw new Error("error");
       }
 
       const data = formatData(e.target.result as string);
 
+      // zaktualizowanie wykresu
       distanceChart.update({
         elementId: "distance-chart",
         xData: data.map((e) => e[0]),
@@ -105,17 +110,18 @@ const createCharts = (data: number[][]) => {
   }
 
   fileInput?.addEventListener("change", function (e) {
-    console.log("xd");
     if (e.target) {
       readFile((e.target as any).files[0]);
     }
 
+    // wyswietlenie nazwy pliku
     if (title) {
       const splitValue = fileInput.value.split("\\");
       const formattedValue = splitValue[splitValue.length - 1];
       title.textContent = formattedValue;
     }
 
+    // bez tej linijki, gdybysmy chcieli wczytac jeszcze raz ten sam plik, to metoda onChange sie nie uruchomi bo nazwa pliku sie nie zmienilaby w porownaniu z wartoscia fileInput
     fileInput.value = "";
   });
 };
