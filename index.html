@@ -11,18 +11,22 @@
       <div id="app">
         <!-- <input type="color" id="voltage-color" />
         <canvas id="voltage-chart"></canvas> -->
-        <div id="select-color">
-          <h4>Wybierz kolor wykresu: </h4>
+        <div class="actions">
+          <input type="file" accept=".lvm" id="file-input" name="uploadfile" />
+          <label for="file-input" id="file-input-label">Wybierz plik</label>
+          <p>Aktualnie wyswietlany plik:</p>
+          <h4 id="file-title"></h4>
+          <h4>Wybierz kolor wykresu:</h4>
           <input type="color" id="distance-color" />
+          <button id="stop-chart-btn">Zatrzymaj wykres</button>
+          <button disabled id="start-chart-btn">Wznów wykres</button>
         </div>
-        
+
         <canvas id="distance-chart"></canvas>
       </div>
     </div>
-    
-    
+
     <script type="module" src="/src/main.ts"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   </body>
 </html>
-

@@ -23,6 +23,7 @@ export class ChartWrapper {
   #borderColor?: string;
   #maxElements: number;
   #end: number;
+  #interval?: number;
 
   constructor(args: ChartProperties) {
     const {
@@ -94,6 +95,9 @@ export class ChartWrapper {
             display: true,
             text: this.#xTitle,
           },
+          ticks: {
+            maxTicksLimit: 10,
+          },
         },
       },
     };
@@ -105,10 +109,7 @@ export class ChartWrapper {
     };
 
     this.#chart = new Chart(this.#element, config);
-    setInterval(() => {
-      this.#setEndAfterChartFilled();
-      this.#updateChart();
-    }, 2);
+    this.startInterval();
   }
 
   #updateChart() {
@@ -131,6 +132,51 @@ export class ChartWrapper {
     }
   }
 
+  update(args: ChartProperties) {
+    const {
+      yData,
+      xData,
+      elementId,
+      xTitle,
+      yTitle,
+      borderColor,
+      maxNumberOfElementsOnChart,
+    } = args;
+
+    if (yData.length !== xData.length) {
+      throw new Error(
+        "Data on X axis must be the same length as data on Y axis"
+      );
+    }
+
+    const element = document.getElementById(elementId) as ChartItem;
+
+    if (!element) {
+      throw new Error("Wrong element id provided. Element does not exist");
+    }
+
+    this.#chart?.destroy();
+    this.stopInterval();
+
+    console.log("robie robie");
+
+    if (borderColor && isValidHexaCode(borderColor)) {
+      this.#borderColor = borderColor;
+    } else {
+      this.#borderColor = defaultColor;
+    }
+
+    this.#element = element;
+    this.#xData = xData;
+    this.#yData = yData;
+    this.#maxElements = maxNumberOfElementsOnChart;
+    this.#end = maxNumberOfElementsOnChart;
+    this.#xTitle = xTitle;
+    this.#yTitle = yTitle;
+
+    this.#create();
+  }
+
   updateBorderColor(color: string) {
     if (isValidHexaCode(color) && this.#chart) {
       this.#borderColor = color;
@@ -140,6 +186,19 @@ export class ChartWrapper {
     } else {
       console.error("Wrong color provided: " + color);
     }
+  }
+
+  stopInterval() {
+    clearInterval(this.#interval);
+    this.#interval = undefined;
+  }
+
+  startInterval() {
+    if (!this.#interval)
+      this.#interval = setInterval(() => {
+        this.#setEndAfterChartFilled();
+        this.#updateChart();
+      }, 2);
   }
 
   #setEndAfterChartFilled() {
@@ -165,4 +224,3 @@ export class ChartWrapper {
     };
   }
 }
-
