@@ -16,8 +16,11 @@
           <h4 id="file-title"></h4>
           <h4>Wybierz kolor wykresu:</h4>
           <input type="color" id="distance-color" />
+          <p>Wartość maksymalna: <span id="maxY"></span> dla x = <span id="maxX"></span></p>
+          <p>Wartość minimalna: <span id="minY"></span> dla x = <span id="minX"></span></p>
           <button id="stop-chart-btn">Zatrzymaj wykres</button>
           <button disabled id="start-chart-btn">Wznów wykres</button>
+          <input id="range-input" type="range">Zmień prędkość wykresu</input>
         </div>
 
         <canvas id="distance-chart"></canvas>

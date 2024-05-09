@@ -1,4 +1,3 @@
-import { applyOnColorChange } from "./applyOnColorChange";
 import { ChartWrapper } from "./chart";
 import { formatData } from "./formatData";
 import "./style.css";
@@ -11,11 +10,19 @@ const MAX_ELEMENTS = import.meta.env.VITE_MAX_ELEMENTS;
 
 const stopBtn = document.getElementById("stop-chart-btn");
 const startBtn = document.getElementById("start-chart-btn");
+
 const fileInput = document.getElementById("file-input") as HTMLInputElement;
+const distanceColorInput = document.getElementById(
+  "distance-color"
+) as HTMLInputElement;
+// TODO umożliwić zmianę prędkości wykresu
+const rangeInput = document.getElementById("range-input") as HTMLInputElement;
 
 const title = document.getElementById("file-title");
-
-const distanceColorInput = document.getElementById("distance-color");
+const maxY = document.getElementById("maxY");
+const maxX = document.getElementById("maxX");
+const minY = document.getElementById("minY");
+const minX = document.getElementById("minX");
 
 const init = () => {
   getDataFromFile();
@@ -43,6 +50,21 @@ const createChart = (data: number[][]) => {
     startBtn?.removeAttribute("disabled");
   };
 
+  const updateMinMaxValues = () => {
+    maxX
+      ? (maxX.textContent = distanceChart.max.x.toPrecision(4).toString())
+      : null;
+    maxY
+      ? (maxY.textContent = distanceChart.max.y.toPrecision(4).toString())
+      : null;
+    minY
+      ? (minY.textContent = distanceChart.min.y.toPrecision(4).toString())
+      : null;
+    minX
+      ? (minX.textContent = distanceChart.min.x.toPrecision(4).toString())
+      : null;
+  };
+
   function readFile(file: Blob) {
     const reader = new FileReader();
 
@@ -64,7 +86,9 @@ const createChart = (data: number[][]) => {
         xTitle: "Czas [s]",
         yTitle: "Odległość [mm]",
         maxNumberOfElementsOnChart,
+        borderColor: distanceChart.getBorderColor(),
       });
+      updateMinMaxValues();
       resumeChart();
     }
     reader.readAsText(file);
@@ -78,9 +102,17 @@ const createChart = (data: number[][]) => {
     }
   };
 
+  const applyOnColorChange = () => {
+    distanceColorInput?.addEventListener("input", (e) => {
+      if (e && e.target) {
+        distanceChart.updateBorderColor(e.target.value as string);
+      }
+    });
+  };
+
   const maxElements = parseInt(MAX_ELEMENTS);
 
-  const maxNumberOfElementsOnChart = maxElements || 1000;
+  const maxNumberOfElementsOnChart = maxElements;
 
   const distanceChart = new ChartWrapper({
     elementId: "distance-chart",
@@ -94,9 +126,9 @@ const createChart = (data: number[][]) => {
   // wyswietlenie nazwy wyswietlanego pliku
   displayTitle(FILE_PATH);
 
-  if (distanceColorInput) {
-    applyOnColorChange(distanceColorInput, distanceChart);
-  }
+  applyOnColorChange();
+
+  updateMinMaxValues();
 
   // jak klikniemy w zatrzymaj to automatycznie przycisk staje sie disabled
   stopBtn?.addEventListener("click", stopChart);

@@ -24,6 +24,8 @@ export class ChartWrapper {
   #maxElements: number;
   #end: number;
   #interval?: number;
+  max: { y: number; x: number };
+  min: { y: number; x: number };
 
   constructor(args: ChartProperties) {
     const {
@@ -62,7 +64,33 @@ export class ChartWrapper {
     this.#xTitle = xTitle;
     this.#yTitle = yTitle;
 
+    this.max = this.#getBoundValues(xData, yData, "max");
+    this.min = this.#getBoundValues(xData, yData, "min");
+
     this.#create();
+  }
+
+  #getBoundValues(
+    xData: number[],
+    yData: number[],
+    type: "min" | "max" = "max"
+  ): { x: number; y: number } {
+    if (type === "max") {
+      const maxY = Math.max(...yData);
+      const maxYIndex = yData.findIndex((data) => data === maxY);
+
+      return { y: maxY, x: xData.find((_, i) => i === maxYIndex) as number };
+    } else {
+      const minY = Math.min(...yData);
+      const minYIndex = yData.findIndex((data) => data === minY);
+
+      return { y: minY, x: xData.find((_, i) => i === minYIndex) as number };
+    }
+  }
+
+  #setMinAndMaxValues(xData: number[], yData: number[]) {
+    this.max = this.#getBoundValues(xData, yData, "max");
+    this.min = this.#getBoundValues(xData, yData, "min");
   }
 
   async #create() {
@@ -132,6 +160,10 @@ export class ChartWrapper {
     }
   }
 
+  getBorderColor() {
+    return this.#borderColor;
+  }
+
   update(args: ChartProperties) {
     const {
       yData,
@@ -171,6 +203,8 @@ export class ChartWrapper {
     this.#end = maxNumberOfElementsOnChart;
     this.#xTitle = xTitle;
     this.#yTitle = yTitle;
+
+    this.#setMinAndMaxValues(xData, yData);
 
     this.#create();
   }
