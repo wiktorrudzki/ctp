@@ -158,8 +158,6 @@ export class ChartWrapper {
     this.#chart?.destroy();
     this.stopInterval();
 
-    console.log("robie robie");
-
     if (borderColor && isValidHexaCode(borderColor)) {
       this.#borderColor = borderColor;
     } else {
