@@ -1,6 +1,7 @@
 import { ChartWrapper } from "./chart";
 import { formatData } from "./formatData";
 import "./style.css";
+import toastr from "toastr";
 
 import { Chart, registerables } from "chart.js";
 Chart.register(...registerables);
@@ -17,6 +18,11 @@ const distanceColorInput = document.getElementById(
 ) as HTMLInputElement;
 // TODO umożliwić zmianę prędkości wykresu
 const rangeInput = document.getElementById("range-input") as HTMLInputElement;
+const searchXInput = document.getElementById(
+  "search-x-input"
+) as HTMLInputElement;
+
+let searchByXTimeout: number;
 
 const title = document.getElementById("file-title");
 const maxY = document.getElementById("maxY");
@@ -110,6 +116,35 @@ const createChart = (data: number[][]) => {
     });
   };
 
+  const applySearchByX = () => {
+    searchXInput?.addEventListener("input", (e) => {
+      if (e && e.target) {
+        clearTimeout(searchByXTimeout);
+
+        searchByXTimeout = setTimeout(() => {
+          // TODO zaaplikować ustawienie wykresy na danym X
+          const xData = distanceChart.getXData();
+
+          const value = parseInt(e.target?.value as string);
+
+          const x = xData
+            .map((data) => Math.round(data))
+            .find((x) => x === value);
+
+          if (x) {
+            distanceChart.setSpecificX(x);
+            stopChart();
+            toastr.success(
+              `Ustawiono przedział zmiennych X na: ${x} +/- ${maxElements}`
+            );
+          } else {
+            toastr.warning("Podana wartość nie istnieje dla wczytanych danych");
+          }
+        }, 750);
+      }
+    });
+  };
+
   const maxElements = parseInt(MAX_ELEMENTS);
 
   const maxNumberOfElementsOnChart = maxElements;
@@ -129,6 +164,8 @@ const createChart = (data: number[][]) => {
   applyOnColorChange();
 
   updateMinMaxValues();
+
+  applySearchByX();
 
   // jak klikniemy w zatrzymaj to automatycznie przycisk staje sie disabled
   stopBtn?.addEventListener("click", stopChart);

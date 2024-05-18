@@ -64,13 +64,17 @@ export class ChartWrapper {
     this.#xTitle = xTitle;
     this.#yTitle = yTitle;
 
-    this.max = this.#getBoundValues(xData, yData, "max");
-    this.min = this.#getBoundValues(xData, yData, "min");
+    this.max = this.#getBoundaryValues(xData, yData, "max");
+    this.min = this.#getBoundaryValues(xData, yData, "min");
 
     this.#create();
   }
 
-  #getBoundValues(
+  getXData() {
+    return this.#xData;
+  }
+
+  #getBoundaryValues(
     xData: number[],
     yData: number[],
     type: "min" | "max" = "max"
@@ -89,8 +93,8 @@ export class ChartWrapper {
   }
 
   #setMinAndMaxValues(xData: number[], yData: number[]) {
-    this.max = this.#getBoundValues(xData, yData, "max");
-    this.min = this.#getBoundValues(xData, yData, "min");
+    this.max = this.#getBoundaryValues(xData, yData, "max");
+    this.min = this.#getBoundaryValues(xData, yData, "min");
   }
 
   async #create() {
@@ -138,6 +142,31 @@ export class ChartWrapper {
 
     this.#chart = new Chart(this.#element, config);
     this.startInterval();
+  }
+
+  #updateChartByLabel(x: number) {
+    if (!this.#chart) {
+      throw new Error("Cannot update chart when it is not defined");
+    }
+
+    const halfOfMaxElements = Math.round(this.#maxElements / 2);
+
+    const data = {
+      labels: this.#xData.slice(x - halfOfMaxElements, x + halfOfMaxElements),
+      datasets: [
+        {
+          label: this.#yTitle,
+          data: this.#yData.slice(x - halfOfMaxElements, x + halfOfMaxElements),
+          fill: false,
+          borderColor: this.#borderColor,
+          tension: 0.1,
+        },
+      ],
+    };
+
+    this.#chart.data = data;
+
+    this.#chart.update();
   }
 
   #updateChart() {
@@ -233,6 +262,14 @@ export class ChartWrapper {
       }, 2);
   }
 
+  setSpecificX(x: number) {
+    const index = this.#xData
+      .map((x) => Math.round(x))
+      .findIndex((e) => e === x);
+
+    this.#updateChartByLabel(index);
+  }
+
   #setEndAfterChartFilled() {
     if (this.#end < this.#xData.length - 1) {
       this.#end++;
@@ -255,4 +292,14 @@ export class ChartWrapper {
       max: Math.ceil(max),
     };
   }
+
+  // public setSpecificX(x: number): void {
+  //   const index = this.#xData.map((data) => Math.round(data)).indexOf(x);
+  //   if (index !== -1) {
+  //     this.#end = index;
+  //     this.#updateChart();
+  //   } else {
+  //     console.error(`Value ${x} not found in xData`);
+  //   }
+  // }
 }
