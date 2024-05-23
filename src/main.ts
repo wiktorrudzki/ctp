@@ -2,8 +2,6 @@ import { ChartWrapper } from "./chart";
 import { formatData } from "./formatData";
 import "./style.css";
 import toastr from "toastr";
-import jsPDF from 'jspdf';
-import html2canvas from 'html2canvas';
 
 import { Chart, registerables } from "chart.js";
 Chart.register(...registerables);
@@ -13,7 +11,6 @@ const MAX_ELEMENTS = import.meta.env.VITE_MAX_ELEMENTS;
 
 const stopBtn = document.getElementById("stop-chart-btn");
 const startBtn = document.getElementById("start-chart-btn");
-const exportBtn = document.getElementById("export-chart-btn");
 
 const fileInput = document.getElementById("file-input") as HTMLInputElement;
 const distanceColorInput = document.getElementById(
@@ -33,14 +30,6 @@ const maxX = document.getElementById("maxX");
 const minY = document.getElementById("minY");
 const minX = document.getElementById("minX");
 
-const hamMenu = document.querySelector(".ham-menu");
-
-const offScreenMenu = document.querySelector(".off-screen-menu");
-
-hamMenu.addEventListener("click", () => {
-  hamMenu.classList.toggle("active");
-  offScreenMenu.classList.toggle("active");
-});
 const init = () => {
   getDataFromFile();
 };
@@ -156,18 +145,6 @@ const createChart = (data: number[][]) => {
     });
   };
 
-  const exportChartToPdf = () =>{
-    const chartElement = document.getElementById('distance-chart');
-    if(chartElement){
-      html2canvas(chartElement).then((element)=>{
-        const imgData = element.toDataURL('image/png');
-        const pdf = new jsPDF();
-        pdf.addImage(imgData, 'PNG', 10, 10, element.width / 4, element.height /4);
-        pdf.save('chart.pdf')
-      })
-    }
-  }
-
   const maxElements = parseInt(MAX_ELEMENTS);
 
   const maxNumberOfElementsOnChart = maxElements;
@@ -195,8 +172,6 @@ const createChart = (data: number[][]) => {
 
   // jak klikniemy w wznow wykres to automatycznie staje sie ten przycisk disabled
   startBtn?.addEventListener("click", resumeChart);
-  // exporting to chart.pdf onClick event
-  exportBtn?.addEventListener("click", exportChartToPdf);
 
   fileInput?.addEventListener("change", function (e) {
     if (e.target) {

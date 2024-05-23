@@ -8,22 +8,6 @@
     <title>Cyfrowe techniki pomiarowe</title>
   </head>
   <body>
-    <div class="off-screen-menu">
-      <ul>
-        <li id="config-button" onclick="enableDragging()"><img width="50px" src="./src/common/assets/icons/mechanic-tool-svgrepo-com.svg"><img><span>Edytuj stronę</span></li>
-      </ul>
-    </div>
-    <nav>
-      <div class="text">
-        <span>Cyfrowe techniki pomiarowe</span>
-      </div>
-      <div class="ham-menu">
-        <span></span>
-        <span></span>
-        <span></span>
-      </div>
-    </nav>
-
     <div id="container">
       <div id="app">
         <div class="actions">
@@ -36,13 +20,12 @@
           <p>Wartość maksymalna: <span id="maxY"></span> dla x = <span id="maxX"></span></p>
           <p>Wartość minimalna: <span id="minY"></span> dla x = <span id="minX"></span></p>
           <button id="stop-chart-btn">Zatrzymaj wykres</button>
-          <button id="export-chart-btn">Wyeksportuj wykres</button>
           <button disabled id="start-chart-btn">Wznów wykres</button>
           <input id="search-x-input">Szukaj po X</input>
           <input id="range-input" type="range">Zmień prędkość wykresu</input>
         </div>
 
-        <canvas class="chart" id="distance-chart"></canvas>
+        <canvas id="distance-chart"></canvas>
       </div>
     </div>
 
