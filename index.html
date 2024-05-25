@@ -3,30 +3,73 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <link rel="stylesheet" href="styles.css" />
     <link href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" rel="stylesheet" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
     <title>Cyfrowe techniki pomiarowe</title>
   </head>
   <body>
     <div id="container">
-      <div id="app">
-        <div class="actions">
+      <div id="sidebar">
+        <h2>Opcje wykresu:</h2>
+        <div id="choose-file">
           <input type="file" accept=".lvm" id="file-input" name="uploadfile" />
           <label for="file-input" id="file-input-label">Wybierz plik</label>
-          <p>Aktualnie wyswietlany plik:</p>
-          <h4 id="file-title"></h4>
+        </div>
+        <hr class="hr"/>
+        <div class="options">
+            <h4>Aktualnie wyświetlany plik:</h4>
+            <h4 id="file-title"></h4>
+        </div>
+        <hr class="hr"/>
+        <div class="options">
           <h4>Wybierz kolor wykresu:</h4>
           <input type="color" id="distance-color" />
-          <p>Wartość maksymalna: <span id="maxY"></span> dla x = <span id="maxX"></span></p>
-          <p>Wartość minimalna: <span id="minY"></span> dla x = <span id="minX"></span></p>
-          <button id="stop-chart-btn">Zatrzymaj wykres</button>
-          <button disabled id="start-chart-btn">Wznów wykres</button>
-          <input id="search-x-input">Szukaj po X</input>
-          <input id="range-input" type="range">Zmień prędkość wykresu</input>
         </div>
-        <input id="x-title-input">Tytuł osi X</input>
-        <input id="y-title-input">Tytuł osi Y</input>
-        <canvas id="distance-chart"></canvas>
+        <hr class="hr"/>
+        <div class="options">
+          <h4>Wartość max: <span id="maxY"></span> dla x = <span id="maxX"></span></h4>
+        </div>
+        <hr class="hr"/>
+        <div class="options">
+          <h4>Wartość min: <span id="minY"></span> dla x = <span id="minX"></span></h4>
+        </div>
+        <hr class="hr"/>
+        <div class="options">
+          <button id="stop-chart-btn" class="buttons">Zatrzymaj</button>
+          <button disabled id="start-chart-btn" class="buttons">Wznów</button>
+        </div>
+        <hr class="hr"/>
+        <div class="options">
+          <h4>Szukaj po X: </h4>
+          <input id="search-x-input" class="input"></input>
+        </div>
+        <hr class="hr"/>
+        <div class="options">
+          <h4>Zmień prędkość wykresu: </h4>
+          <input id="range-input" type="range"></input>
+        </div>
+        <hr class="hr"/>
+        <div class="options">
+          <h4>Zmień tytuł osi X: </h4>
+          <input id="x-title-input" class="input"></input>
+        </div>
+        <hr class="hr"/>
+        <div class="options">
+          <h4>Zmień tytuł osi Y: </h4>
+          <input id="y-title-input" class="input"></input>
+        </div>
+      </div>
+      <div id="app-container">
+        <div id="nav-bar">
+          <h2>Cyfrowe techniki pomiarowe</h2>
+        </div>
+        <div id="chart">
+          <canvas id="distance-chart"></canvas>
+        </div>
       </div>
     </div>
 

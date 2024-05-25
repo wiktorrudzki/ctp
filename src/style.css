@@ -1,3 +1,8 @@
+body{
+  margin: 0;
+  font-family: "Roboto", sans-serif;
+}
+
 #distance-color {
   display: flex;
   justify-content: left;
@@ -11,15 +16,14 @@
   width: auto;
 }
 #container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
+ display: flex;
+ margin: 0;
 }
-#app {
-  text-align: center;
-  max-width: 70%;
-  width: 1000px;
+#chart {
+  display: flex;
+  justify-content: right;
+  align-items: center;
+  height: auto;
 }
 
 #file-input {
@@ -29,4 +33,89 @@
   background: linear-gradient(top, #f9f9f9, #e3e3e3);
   border: 1px solid #999;
   cursor: pointer;
+}
+#sidebar{
+  width: 300px;
+  height: 100vh;
+  margin: 0;
+  padding: 15px;
+  border-right: 3px solid #999;
+  background-color: #ffffff;
+}
+#file-input {
+  display: none;
+}
+
+#file-input-label {
+  background: linear-gradient(top, #f9f9f9, #e3e3e3);
+  border: 1px solid #999;
+  cursor: pointer;
+  border: 2px solid #ccc;
+  background-color: #d8d8d8;
+  color: #000000;
+  padding: 10px 15px;
+  border-radius: 5px;
+  font-size: 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+#file-input-label:hover {
+  background-color: #949494; /
+}
+.options{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.hr{
+  border-top: 1px solid #d8d8d8;
+}
+.buttons {
+  background: linear-gradient(top, #f9f9f9, #e3e3e3);
+  border: 1px solid #999;
+  cursor: pointer;
+  border: 2px solid #ccc;
+  background-color: #d8d8d8;
+  color: #000000;
+  padding: 10px 15px;
+  border-radius: 5px;
+  font-size: 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 300px;
+}
+.buttons:hover {
+  background-color: #949494; /
+}
+#stop-chart-btn{
+  margin-right: 10px;
+}
+.input {
+  padding: 10px 15px;
+  font-size: 16px;
+  border: 2px solid #ccc;
+  border-radius: 5px;
+  outline: none; 
+  width: 100px;
+}
+
+.input:focus {
+  border-color: #3a3a3a; 
+}
+#app-container{
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+#nav-bar{
+  width: 100%;
+  height: 50px;
+  background-color: rgb(216, 216, 216);
+  border-bottom: 2px solid #999;
+  padding-left: 30px;
+  display: flex;
+  justify-content: left;
+  align-items: center;
 }
