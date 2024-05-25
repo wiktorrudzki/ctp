@@ -1,6 +1,8 @@
 body{
   margin: 0;
   font-family: "Roboto", sans-serif;
+  height: 100vh;
+  overflow: hidden;
 }
 
 #distance-color {
@@ -18,6 +20,7 @@ body{
 #container {
  display: flex;
  margin: 0;
+ max-height: 100vh;
 }
 #chart {
   display: flex;
@@ -35,13 +38,29 @@ body{
   cursor: pointer;
 }
 #sidebar{
+  overflow-y: auto;
   width: 300px;
   height: 100vh;
   margin: 0;
   padding: 15px;
   border-right: 3px solid #999;
   background-color: #ffffff;
+  
 }
+
+#sidebar::-webkit-scrollbar {
+  width: 7px;
+}
+
+#sidebar::-webkit-scrollbar-track {
+  border-radius: 10px;
+}
+
+#sidebar::-webkit-scrollbar-thumb {
+  background: grey;
+  border-radius: 10px;
+}
+
 #file-input {
   display: none;
 }
@@ -67,6 +86,12 @@ body{
   display: flex;
   justify-content: space-between;
   align-items: center;
+  button{
+    width: 100%;
+  }
+}
+.export{
+  width: 100%;
 }
 .hr{
   border-top: 1px solid #d8d8d8;

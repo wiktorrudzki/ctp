@@ -238,6 +238,7 @@ const createChart = (data: number[][]) => {
       });
 
       newButtonContainer = document.createElement('div');
+      newButtonContainer.className = 'options';
       newButtonContainer.appendChild(pdfButton);
       newButtonContainer.appendChild(pngButton);
 
