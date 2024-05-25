@@ -2,15 +2,19 @@ import { ChartWrapper } from "./chart";
 import { formatData } from "./formatData";
 import "./style.css";
 import toastr from "toastr";
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 
 import { Chart, registerables } from "chart.js";
 Chart.register(...registerables);
 
 const FILE_PATH = import.meta.env.VITE_FILE_PATH;
 const MAX_ELEMENTS = import.meta.env.VITE_MAX_ELEMENTS;
-
+let newButtonContainer: HTMLDivElement;
+const exportButtonContainer = document.querySelector('.options.export');
 const stopBtn = document.getElementById("stop-chart-btn");
 const startBtn = document.getElementById("start-chart-btn");
+const exportBtn = document.getElementById("export-chart-btn");
 
 const fileInput = document.getElementById("file-input") as HTMLInputElement;
 const distanceColorInput = document.getElementById(
@@ -35,6 +39,18 @@ const maxY = document.getElementById("maxY");
 const maxX = document.getElementById("maxX");
 const minY = document.getElementById("minY");
 const minX = document.getElementById("minX");
+
+const hamMenu = document.querySelector(".ham-menu");
+
+const offScreenMenu = document.querySelector(".off-screen-menu");
+
+// hamMenu.addEventListener("click", () => {
+//   hamMenu.classList.toggle("active");
+//   offScreenMenu.classList.toggle("active");
+// });
+
+
+
 
 const init = () => {
   getDataFromFile();
@@ -163,6 +179,77 @@ const createChart = (data: number[][]) => {
       }
     });
   };
+  const exportChartToPng = () => {
+    const chartElement = document.getElementById('distance-chart');
+    if (chartElement) {
+      html2canvas(chartElement, { scale: 2 }).then((canvas) => {
+        const imgData = canvas.toDataURL('image/png');
+        const link = document.createElement('a');
+        link.href = imgData;
+        link.download = 'chart.png';
+        link.click();
+        restoreDefaultButton();
+      });
+    }
+  };
+
+  const exportChartToPdf = () => {
+    const chartElement = document.getElementById('distance-chart');
+    if (chartElement) {
+      html2canvas(chartElement, { scale: 2 }).then((canvas) => {
+        const imgData = canvas.toDataURL('image/png');
+        const pdf = new jsPDF({
+          orientation: 'landscape',
+          unit: 'pt',
+          format: [canvas.width, canvas.height]
+        });
+        pdf.addImage(imgData, 'PNG', 0, 0, canvas.width, canvas.height);
+        pdf.save('chart.pdf');
+        restoreDefaultButton();
+      });
+    }
+  };
+
+  const restoreDefaultButton = () => {
+    if (newButtonContainer) {
+      while (newButtonContainer.firstChild) {
+        newButtonContainer.removeChild(newButtonContainer.firstChild);
+      }
+    }
+
+    const defaultButton = document.createElement('button');
+    defaultButton.id = 'export-chart-btn';
+    defaultButton.className = 'buttons';
+    defaultButton.innerText = 'Wyeksportuj wykres';
+
+    defaultButton.addEventListener('click', function () {
+      const pdfButton = document.createElement('button');
+      pdfButton.innerText = 'PDF';
+      pdfButton.className = 'buttons';
+      pdfButton.addEventListener('click', () => {
+        exportChartToPdf();
+      });
+
+      const pngButton = document.createElement('button');
+      pngButton.innerText = 'PNG';
+      pngButton.className = 'buttons';
+      pngButton.addEventListener('click', () => {
+        exportChartToPng();
+      });
+
+      newButtonContainer = document.createElement('div');
+      newButtonContainer.appendChild(pdfButton);
+      newButtonContainer.appendChild(pngButton);
+
+      exportButtonContainer.innerHTML = '';
+      exportButtonContainer.appendChild(newButtonContainer);
+    });
+
+    exportButtonContainer.innerHTML = '';
+    exportButtonContainer.appendChild(defaultButton);
+  };
+
+  
 
   const maxElements = parseInt(MAX_ELEMENTS);
 
@@ -188,10 +275,31 @@ const createChart = (data: number[][]) => {
 
   applySearchByX();
 
-  // jak klikniemy w zatrzymaj to automatycznie przycisk staje sie disabled
+  document.getElementById('export-chart-btn').addEventListener('click', function () {
+    const pdfButton = document.createElement('button');
+    pdfButton.innerText = 'PDF';
+    pdfButton.className = 'buttons';
+    pdfButton.addEventListener('click', () => {
+      exportChartToPdf();
+    });
+
+    const pngButton = document.createElement('button');
+    pngButton.innerText = 'PNG';
+    pngButton.className = 'buttons';
+    pngButton.addEventListener('click', () => {
+      exportChartToPng();
+    });
+
+    newButtonContainer = document.createElement('div');
+    newButtonContainer.appendChild(pdfButton);
+    newButtonContainer.appendChild(pngButton);
+
+    exportButtonContainer.innerHTML = '';
+    exportButtonContainer.appendChild(newButtonContainer);
+  });
+  
   stopBtn?.addEventListener("click", stopChart);
 
-  // jak klikniemy w wznow wykres to automatycznie staje sie ten przycisk disabled
   startBtn?.addEventListener("click", resumeChart);
 
   fileInput?.addEventListener("change", function (e) {
@@ -199,12 +307,10 @@ const createChart = (data: number[][]) => {
       readFile((e.target as any).files[0]);
     }
 
-    // wyswietlenie nazwy pliku
     if (title) {
       displayTitle(fileInput.value);
     }
 
-    // bez tej linijki, gdybysmy chcieli wczytac jeszcze raz ten sam plik, to metoda onChange sie nie uruchomi bo nazwa pliku sie nie zmienilaby w porownaniu z wartoscia fileInput
     fileInput.value = "";
   });
 };
