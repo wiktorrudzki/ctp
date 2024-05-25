@@ -21,6 +21,12 @@ const rangeInput = document.getElementById("range-input") as HTMLInputElement;
 const searchXInput = document.getElementById(
   "search-x-input"
 ) as HTMLInputElement;
+const yTitleInput = document.getElementById(
+  "y-title-input"
+) as HTMLInputElement;
+const xTitleInput = document.getElementById(
+  "x-title-input"
+) as HTMLInputElement;
 
 let searchByXTimeout: number;
 
@@ -116,6 +122,19 @@ const createChart = (data: number[][]) => {
     });
   };
 
+  const applyOnAxisTitleChange = () => {
+    xTitleInput.addEventListener("input", (e) => {
+      if (e && e.target) {
+        distanceChart.updateXTitle(e.target.value as string);
+      }
+    });
+    yTitleInput.addEventListener("input", (e) => {
+      if (e && e.target) {
+        distanceChart.updateYTitle(e.target.value as string);
+      }
+    });
+  };
+
   const applySearchByX = () => {
     searchXInput?.addEventListener("input", (e) => {
       if (e && e.target) {
@@ -162,6 +181,8 @@ const createChart = (data: number[][]) => {
   displayTitle(FILE_PATH);
 
   applyOnColorChange();
+
+  applyOnAxisTitleChange();
 
   updateMinMaxValues();
 

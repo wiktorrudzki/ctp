@@ -249,6 +249,40 @@ export class ChartWrapper {
     }
   }
 
+  updateXTitle(title: string) {
+    if (!this.#chart) {
+      throw new Error("Cannot update chart when it is not defined");
+    }
+
+    if (title === "") {
+      this.#xTitle = "Czas [s]";
+      this.#chart.options.scales.x.title.text = "Czas [s]";
+    } else {
+      this.#xTitle = title;
+      this.#chart.options.scales.x.title.text = title;
+    }
+
+    this.#chart?.update();
+  }
+
+  updateYTitle(title: string) {
+    if (!this.#chart) {
+      throw new Error("Cannot update chart when it is not defined");
+    }
+
+    if (title === "") {
+      this.#yTitle = "Odległość [mm]";
+      this.#chart.options.scales.y.title.text = "Odległość [mm]";
+      this.#chart.data.datasets[0].label = "Odległość [mm]";
+    } else {
+      this.#yTitle = title;
+      this.#chart.options.scales.y.title.text = title;
+      this.#chart.data.datasets[0].label = title;
+    }
+
+    this.#chart?.update();
+  }
+
   stopInterval() {
     clearInterval(this.#interval);
     this.#interval = undefined;
