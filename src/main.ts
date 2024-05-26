@@ -49,6 +49,34 @@ const offScreenMenu = document.querySelector(".off-screen-menu");
 //   offScreenMenu.classList.toggle("active");
 // });
 
+const colorThemes = document.querySelectorAll('[name="theme"]');
+
+
+const storeTheme = function (theme) {
+  localStorage.setItem("theme", theme);
+};
+
+
+const setTheme = function () {
+  const activeTheme = localStorage.getItem("theme") || 'light';
+  colorThemes.forEach((themeOption) => {
+    if (themeOption.id === activeTheme) {
+      themeOption.checked = true;
+    }
+  });
+
+  document.documentElement.className = activeTheme;
+};
+
+colorThemes.forEach((themeOption) => {
+  themeOption.addEventListener("click", () => {
+    storeTheme(themeOption.id);
+
+    document.documentElement.className = themeOption.id;
+  });
+});
+
+document.onload = setTheme();
 
 
 
@@ -238,7 +266,6 @@ const createChart = (data: number[][]) => {
       });
 
       newButtonContainer = document.createElement('div');
-      newButtonContainer.className = 'options';
       newButtonContainer.appendChild(pdfButton);
       newButtonContainer.appendChild(pngButton);
 
@@ -250,7 +277,7 @@ const createChart = (data: number[][]) => {
     exportButtonContainer.appendChild(defaultButton);
   };
 
-  
+
 
   const maxElements = parseInt(MAX_ELEMENTS);
 
@@ -298,7 +325,7 @@ const createChart = (data: number[][]) => {
     exportButtonContainer.innerHTML = '';
     exportButtonContainer.appendChild(newButtonContainer);
   });
-  
+
   stopBtn?.addEventListener("click", stopChart);
 
   startBtn?.addEventListener("click", resumeChart);
