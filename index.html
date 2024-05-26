@@ -23,10 +23,17 @@
         <input type="file" accept=".lvm" id="file-input" name="uploadfile" />
         <label for="file-input" id="file-input-label">Wybierz plik</label>
       </div>
+
+      
+  
       <hr class="hr" />
       <div class="options">
         <h4>Aktualnie wyświetlany plik:</h4>
         <h4 id="file-title"></h4>
+      </div>
+      <div id="choose-file">
+        <input type="button" id="file-review" onclick="togglePopup()"/>
+        <label for="file-review" id="file-input-label">Podgląd zawartości pliku</label>
       </div>
       <hr class="hr" />
       <div class="options">
@@ -106,8 +113,20 @@
     </div>
   </div>
 
+  <div class="popup" id="popup-1">
+    <div class="overlay"></div>
+    <div class="content">
+      <div class="close-btn" onclick="togglePopup()">&times;</div>
+      <h1>Podgląd danych</h1>
+      <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Inventore nobis perferendis adipisci tempora dolore autem consequatur. Harum corporis eligendi corrupti illo sit quasi qui maiores, rerum eveniet, ipsam enim quis amet repudiandae cupiditate a ipsum expedita praesentium iste accusamus fugit. Nam, fugit! Necessitatibus, incidunt! Voluptates nisi sed quis doloremque vitae!</p>
+    </div>
+  </div>
+
   <script type="module" src="/src/main.ts"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    function togglePopup(){document.getElementById("popup-1").classList.toggle("active");}
+</script>
 </body>
 
 </html>

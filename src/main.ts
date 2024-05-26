@@ -33,6 +33,7 @@ const xTitleInput = document.getElementById(
 ) as HTMLInputElement;
 
 let searchByXTimeout: number;
+let fileContent = "";
 
 const title = document.getElementById("file-title");
 const maxY = document.getElementById("maxY");
@@ -88,6 +89,7 @@ const getDataFromFile = () => {
   fetch(FILE_PATH)
     .then(async (res) => res.text())
     .then((res) => {
+      fileContent = res;
       const formattedData = formatData(res);
       createChart(formattedData);
     });
@@ -121,6 +123,8 @@ const createChart = (data: number[][]) => {
       : null;
   };
 
+  
+
   function readFile(file: Blob) {
     const reader = new FileReader();
 
@@ -132,6 +136,7 @@ const createChart = (data: number[][]) => {
         throw new Error("error");
       }
 
+      fileContent = e.target.result as string;
       const data = formatData(e.target.result as string);
 
       // zaktualizowanie wykresu
