@@ -347,6 +347,7 @@ h4 {
   text-align: center;
   padding: 20px;
   box-sizing: border-box;
+  border-radius: 20px;
 }
 
 .popup .close-btn{
@@ -377,4 +378,18 @@ h4 {
   white-space: pre-wrap; /* Zawijanie wierszy */
   display: flex;
   justify-content: center;
+
+}
+
+#dataPopUp::-webkit-scrollbar {
+  width: 20px;
+}
+
+#dataPopUp::-webkit-scrollbar-track {
+  border-radius: 2px;
+}
+
+#dataPopUp::-webkit-scrollbar-thumb {
+  background: var(--clr-border);
+  border-radius: 8px;
 }
