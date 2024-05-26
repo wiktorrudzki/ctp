@@ -370,3 +370,11 @@ h4 {
   transition:all 300ms easy-in-out;
   transform: translate(-50%,-50%) scale(1);
 }
+
+#dataPopUp {
+  overflow-y: auto; /* Włącz pionowy pasek przewijania */
+  max-height: 300px; /* Maksymalna wysokość elementu */
+  white-space: pre-wrap; /* Zawijanie wierszy */
+  display: flex;
+  justify-content: center;
+}
