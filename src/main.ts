@@ -1,50 +1,51 @@
-import { ChartWrapper } from './chart';
-import { formatData } from './formatData';
-import './style.css';
-import toastr from 'toastr';
-import jsPDF from 'jspdf';
-import html2canvas from 'html2canvas';
+import { ChartWrapper } from "./chart";
+import { formatData } from "./formatData";
+import "./style.css";
+import toastr from "toastr";
+import jsPDF from "jspdf";
+import html2canvas from "html2canvas";
 
-import { Chart, registerables } from 'chart.js';
+import { Chart, registerables } from "chart.js";
 Chart.register(...registerables);
 
 const FILE_PATH = import.meta.env.VITE_FILE_PATH;
 const MAX_ELEMENTS = import.meta.env.VITE_MAX_ELEMENTS;
 let newButtonContainer: HTMLDivElement;
 let formatedData: any;
-const exportButtonContainer = document.querySelector('.options.export');
-const stopBtn = document.getElementById('stop-chart-btn');
-const startBtn = document.getElementById('start-chart-btn');
-const exportBtn = document.getElementById('export-chart-btn');
+const exportButtonContainer = document.querySelector(".options.export");
+const stopBtn = document.getElementById("stop-chart-btn");
+const startBtn = document.getElementById("start-chart-btn");
+const exportBtn = document.getElementById("export-chart-btn");
 
-const fileInput = document.getElementById('file-input') as HTMLInputElement;
+const fileInput = document.getElementById("file-input") as HTMLInputElement;
 const distanceColorInput = document.getElementById(
-  'distance-color'
+  "distance-color"
 ) as HTMLInputElement;
 // TODO umożliwić zmianę prędkości wykresu
-const rangeInput = document.getElementById('range-input') as HTMLInputElement;
+const rangeInput = document.getElementById("range-input") as HTMLInputElement;
 const searchXInput = document.getElementById(
-  'search-x-input'
-) as HTMLInputElement;
-const yTitleInput = document.getElementById(
-  'y-title-input'
+  "search-x-input"
 ) as HTMLInputElement;
 const xTitleInput = document.getElementById(
-  'x-title-input'
+  "x-title-input"
+) as HTMLInputElement;
+const maxYValue = document.getElementById(
+  "y-max-value-input"
 ) as HTMLInputElement;
 
 let searchByXTimeout: number;
-let fileContent = '';
+let fileContent = "";
 
-const title = document.getElementById('file-title');
-const maxY = document.getElementById('maxY');
-const maxX = document.getElementById('maxX');
-const minY = document.getElementById('minY');
-const minX = document.getElementById('minX');
+const title = document.getElementById("file-title");
+const maxY = document.getElementById("maxY");
+const maxX = document.getElementById("maxX");
+const minY = document.getElementById("minY");
+const minX = document.getElementById("minX");
+const yInputsWrapper = document.getElementById("y-inputs");
 
-const hamMenu = document.querySelector('.ham-menu');
+const hamMenu = document.querySelector(".ham-menu");
 
-const offScreenMenu = document.querySelector('.off-screen-menu');
+const offScreenMenu = document.querySelector(".off-screen-menu");
 
 // hamMenu.addEventListener("click", () => {
 //   hamMenu.classList.toggle("active");
@@ -54,11 +55,11 @@ const offScreenMenu = document.querySelector('.off-screen-menu');
 const colorThemes = document.querySelectorAll('[name="theme"]');
 
 const storeTheme = function (theme) {
-  localStorage.setItem('theme', theme);
+  localStorage.setItem("theme", theme);
 };
 
 const setTheme = function () {
-  const activeTheme = localStorage.getItem('theme') || 'light';
+  const activeTheme = localStorage.getItem("theme") || "light";
   colorThemes.forEach((themeOption) => {
     if (themeOption.id === activeTheme) {
       themeOption.checked = true;
@@ -69,7 +70,7 @@ const setTheme = function () {
 };
 
 colorThemes.forEach((themeOption) => {
-  themeOption.addEventListener('click', () => {
+  themeOption.addEventListener("click", () => {
     storeTheme(themeOption.id);
 
     document.documentElement.className = themeOption.id;
@@ -93,32 +94,52 @@ const getDataFromFile = () => {
     });
 };
 
+function transpose(list: number[][]) {
+  if (list.length === 0 || !Array.isArray(list[0])) {
+    throw new Error("Input must be a non-empty list");
+  }
+
+  let numRows = list.length;
+  let numCols = list[0].length;
+
+  let transposedList: number[][] = Array.from({ length: numCols }, () => []);
+
+  for (let i = 0; i < numRows; i++) {
+    for (let j = 0; j < numCols; j++) {
+      transposedList[j].push(list[i][j]);
+    }
+  }
+
+  return transposedList;
+}
+
 const createChart = (data: number[][]) => {
   const resumeChart = () => {
     distanceChart.startInterval();
-    startBtn?.setAttribute('disabled', 'disabled');
-    stopBtn?.removeAttribute('disabled');
+    startBtn?.setAttribute("disabled", "disabled");
+    stopBtn?.removeAttribute("disabled");
   };
 
   const stopChart = () => {
     distanceChart.stopInterval();
-    stopBtn?.setAttribute('disabled', 'disabled');
-    startBtn?.removeAttribute('disabled');
+    stopBtn?.setAttribute("disabled", "disabled");
+    startBtn?.removeAttribute("disabled");
   };
 
   const updateMinMaxValues = () => {
-    maxX
-      ? (maxX.textContent = distanceChart.max.x.toPrecision(4).toString())
-      : null;
-    maxY
-      ? (maxY.textContent = distanceChart.max.y.toPrecision(4).toString())
-      : null;
-    minY
-      ? (minY.textContent = distanceChart.min.y.toPrecision(4).toString())
-      : null;
-    minX
-      ? (minX.textContent = distanceChart.min.x.toPrecision(4).toString())
-      : null;
+    // maxX
+    //   ? (maxX.textContent = distanceChart.max.x.toPrecision(4).toString())
+    //   : null;
+    // maxY
+    //   ? (maxY.textContent = distanceChart.max.y.toPrecision(4).toString())
+    //   : null;
+    // minY
+    //   ? (minY.textContent = distanceChart.min.y.toPrecision(4).toString())
+    //   : null;
+    // minX
+    //   ? (minX.textContent = distanceChart.min.x.toPrecision(4).toString())
+    //   : null;
+    // TODO obliczyć max i min dla każdego wykresu
   };
 
   function readFile(file: Blob) {
@@ -129,24 +150,28 @@ const createChart = (data: number[][]) => {
     function readSuccess(e: ProgressEvent<FileReader>) {
       if (!e.target) {
         // jakies byle co wrzucilem na razie
-        throw new Error('error');
+        throw new Error("error");
       }
 
       fileContent = e.target.result as string;
       const data = formatData(e.target.result as string);
       formatedData = formatData(e.target.result as string);
 
+      const transposedData = transpose(data);
+
       // zaktualizowanie wykresu
       distanceChart.update({
-        elementId: 'distance-chart',
-        xData: data.map((e) => e[0]),
-        yData: data.map((e) => e[1]),
-        xTitle: 'Czas [s]',
-        yTitle: 'Odległość [mm]',
+        elementId: "distance-chart",
+        xData: transposedData[0],
+        yData: transposedData
+          .slice(1)
+          .map((data) => ({ values: data, title: "Wartości" })),
+        xTitle: "Argumenty",
         maxNumberOfElementsOnChart,
         borderColor: distanceChart.getBorderColor(),
       });
       updateMinMaxValues();
+      generateYInputs();
       resumeChart();
     }
     reader.readAsText(file);
@@ -154,35 +179,63 @@ const createChart = (data: number[][]) => {
 
   const displayTitle = (path: string) => {
     if (title) {
-      const splitValue = path.split('/');
+      const splitValue = path.split("/");
       const formattedValue = splitValue[splitValue.length - 1];
       title.textContent = formattedValue;
     }
   };
 
   const applyOnColorChange = () => {
-    distanceColorInput?.addEventListener('input', (e) => {
+    distanceColorInput?.addEventListener("input", (e) => {
       if (e && e.target) {
         distanceChart.updateBorderColor(e.target.value as string);
       }
     });
   };
 
-  const applyOnAxisTitleChange = () => {
-    xTitleInput.addEventListener('input', (e) => {
+  const applyOnMaxYValueChange = () => {
+    maxYValue?.addEventListener("input", (e) => {
       if (e && e.target) {
-        distanceChart.updateXTitle(e.target.value as string);
-      }
-    });
-    yTitleInput.addEventListener('input', (e) => {
-      if (e && e.target) {
-        distanceChart.updateYTitle(e.target.value as string);
+        distanceChart.updateMaxYValue(parseInt(e.target.value as string));
       }
     });
   };
 
+  const applyOnAxisTitleChange = () => {
+    xTitleInput.addEventListener("input", (e) => {
+      if (e && e.target) {
+        distanceChart.updateXTitle(e.target.value as string);
+      }
+    });
+  };
+
+  const generateYInputs = () => {
+    if (!yInputsWrapper) {
+      throw new Error("");
+    }
+
+    const inputs = yInputsWrapper.querySelectorAll("input");
+    inputs.forEach((input) => yInputsWrapper.removeChild(input));
+
+    for (let i = 0; i < distanceChart.getNumberOfDatasets(); i++) {
+      const input = document.createElement("input");
+
+      input.type = "text";
+      input.id = `y-input-${i}`;
+      input.className = "input";
+
+      yInputsWrapper.appendChild(input);
+
+      input.addEventListener("input", (e) => {
+        distanceChart.updateYTitle(i, e.target.value as string);
+      });
+
+      yInputsWrapper.appendChild(document.createElement("br"));
+    }
+  };
+
   const applySearchByX = () => {
-    searchXInput?.addEventListener('input', (e) => {
+    searchXInput?.addEventListener("input", (e) => {
       if (e && e.target) {
         clearTimeout(searchByXTimeout);
 
@@ -203,20 +256,21 @@ const createChart = (data: number[][]) => {
               `Ustawiono przedział zmiennych X na: ${x} +/- ${maxElements}`
             );
           } else {
-            toastr.warning('Podana wartość nie istnieje dla wczytanych danych');
+            toastr.warning("Podana wartość nie istnieje dla wczytanych danych");
           }
         }, 750);
       }
     });
   };
+
   const exportChartToPng = () => {
-    const chartElement = document.getElementById('distance-chart');
+    const chartElement = document.getElementById("distance-chart");
     if (chartElement) {
       html2canvas(chartElement, { scale: 2 }).then((canvas) => {
-        const imgData = canvas.toDataURL('image/png');
-        const link = document.createElement('a');
+        const imgData = canvas.toDataURL("image/png");
+        const link = document.createElement("a");
         link.href = imgData;
-        link.download = 'chart.png';
+        link.download = "chart.png";
         link.click();
         restoreDefaultButton();
       });
@@ -224,17 +278,17 @@ const createChart = (data: number[][]) => {
   };
 
   const exportChartToPdf = () => {
-    const chartElement = document.getElementById('distance-chart');
+    const chartElement = document.getElementById("distance-chart");
     if (chartElement) {
       html2canvas(chartElement, { scale: 2 }).then((canvas) => {
-        const imgData = canvas.toDataURL('image/png');
+        const imgData = canvas.toDataURL("image/png");
         const pdf = new jsPDF({
-          orientation: 'landscape',
-          unit: 'pt',
+          orientation: "landscape",
+          unit: "pt",
           format: [canvas.width, canvas.height],
         });
-        pdf.addImage(imgData, 'PNG', 0, 0, canvas.width, canvas.height);
-        pdf.save('chart.pdf');
+        pdf.addImage(imgData, "PNG", 0, 0, canvas.width, canvas.height);
+        pdf.save("chart.pdf");
         restoreDefaultButton();
       });
     }
@@ -247,35 +301,35 @@ const createChart = (data: number[][]) => {
       }
     }
 
-    const defaultButton = document.createElement('button');
-    defaultButton.id = 'export-chart-btn';
-    defaultButton.className = 'buttons';
-    defaultButton.innerText = 'Wyeksportuj wykres';
+    const defaultButton = document.createElement("button");
+    defaultButton.id = "export-chart-btn";
+    defaultButton.className = "buttons";
+    defaultButton.innerText = "Wyeksportuj wykres";
 
-    defaultButton.addEventListener('click', function () {
-      const pdfButton = document.createElement('button');
-      pdfButton.innerText = 'PDF';
-      pdfButton.className = 'buttons';
-      pdfButton.addEventListener('click', () => {
+    defaultButton.addEventListener("click", function () {
+      const pdfButton = document.createElement("button");
+      pdfButton.innerText = "PDF";
+      pdfButton.className = "buttons";
+      pdfButton.addEventListener("click", () => {
         exportChartToPdf();
       });
 
-      const pngButton = document.createElement('button');
-      pngButton.innerText = 'PNG';
-      pngButton.className = 'buttons';
-      pngButton.addEventListener('click', () => {
+      const pngButton = document.createElement("button");
+      pngButton.innerText = "PNG";
+      pngButton.className = "buttons";
+      pngButton.addEventListener("click", () => {
         exportChartToPng();
       });
 
-      newButtonContainer = document.createElement('div');
+      newButtonContainer = document.createElement("div");
       newButtonContainer.appendChild(pdfButton);
       newButtonContainer.appendChild(pngButton);
 
-      exportButtonContainer.innerHTML = '';
+      exportButtonContainer.innerHTML = "";
       exportButtonContainer.appendChild(newButtonContainer);
     });
 
-    exportButtonContainer.innerHTML = '';
+    exportButtonContainer.innerHTML = "";
     exportButtonContainer.appendChild(defaultButton);
   };
 
@@ -283,12 +337,15 @@ const createChart = (data: number[][]) => {
 
   const maxNumberOfElementsOnChart = maxElements;
 
+  const transposedData = transpose(data);
+
   const distanceChart = new ChartWrapper({
-    elementId: 'distance-chart',
-    xData: data.map((e) => e[0]),
-    yData: data.map((e) => e[1]),
-    xTitle: 'Czas [s]',
-    yTitle: 'Odległość [mm]',
+    elementId: "distance-chart",
+    xData: transposedData[0],
+    yData: transposedData
+      .slice(1)
+      .map((data) => ({ values: data, title: "Wartości" })),
+    xTitle: "Argumenty",
     maxNumberOfElementsOnChart,
   });
 
@@ -303,59 +360,62 @@ const createChart = (data: number[][]) => {
 
   applySearchByX();
 
-  document.getElementById('file-review')
-    ?.addEventListener('click', function () {
-      document.getElementById('popup-1').classList.toggle('active');
-      const table = document.createElement('table');
+  applyOnMaxYValueChange();
+
+  generateYInputs();
+
+  document
+    .getElementById("file-review")
+    ?.addEventListener("click", function () {
+      document.getElementById("popup-1").classList.toggle("active");
+      const table = document.createElement("table");
 
       formatedData.forEach((rowData) => {
-
-        const row = document.createElement('tr');
+        const row = document.createElement("tr");
 
         rowData.forEach((cellData) => {
-          const cell = document.createElement('td');
-          cell.textContent = cellData; 
-          row.appendChild(cell); 
+          const cell = document.createElement("td");
+          cell.textContent = cellData;
+          row.appendChild(cell);
         });
 
-        
         table.appendChild(row);
       });
-      const dataPopUp = document.getElementById('dataPopUp');
-      dataPopUp.innerHTML = '';
+      const dataPopUp = document.getElementById("dataPopUp");
+      dataPopUp.innerHTML = "";
       dataPopUp.appendChild(table);
     });
 
   document
-    .getElementById('export-chart-btn')
-    .addEventListener('click', function () {
-      const pdfButton = document.createElement('button');
-      pdfButton.innerText = 'PDF';
-      pdfButton.className = 'buttons';
-      pdfButton.addEventListener('click', () => {
+    .getElementById("export-chart-btn")
+    .addEventListener("click", function () {
+      const pdfButton = document.createElement("button");
+      pdfButton.innerText = "PDF";
+      pdfButton.className = "buttons";
+      pdfButton.addEventListener("click", () => {
         exportChartToPdf();
       });
 
-      const pngButton = document.createElement('button');
-      pngButton.innerText = 'PNG';
-      pngButton.className = 'buttons';
-      pngButton.addEventListener('click', () => {
+      const pngButton = document.createElement("button");
+      pngButton.innerText = "PNG";
+      pngButton.className = "buttons";
+      pngButton.addEventListener("click", () => {
         exportChartToPng();
       });
 
-      newButtonContainer = document.createElement('div');
+      newButtonContainer = document.createElement("div");
       newButtonContainer.appendChild(pdfButton);
       newButtonContainer.appendChild(pngButton);
 
-      exportButtonContainer.innerHTML = '';
+      exportButtonContainer.innerHTML = "";
       exportButtonContainer.appendChild(newButtonContainer);
     });
 
-  stopBtn?.addEventListener('click', stopChart);
+  stopBtn?.addEventListener("click", stopChart);
 
-  startBtn?.addEventListener('click', resumeChart);
+  startBtn?.addEventListener("click", resumeChart);
 
-  fileInput?.addEventListener('change', function (e) {
+  fileInput?.addEventListener("change", function (e) {
     if (e.target) {
       readFile((e.target as any).files[0]);
     }
@@ -364,7 +424,7 @@ const createChart = (data: number[][]) => {
       displayTitle(fileInput.value);
     }
 
-    fileInput.value = '';
+    fileInput.value = "";
   });
 };
 

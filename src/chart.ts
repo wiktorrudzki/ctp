@@ -3,29 +3,31 @@ import { isValidHexaCode } from "./validateHex";
 
 type ChartProperties = {
   elementId: string;
-  yData: number[];
+  yData: Y[];
   xData: number[];
   xTitle?: string;
-  yTitle?: string;
   borderColor?: string;
   maxNumberOfElementsOnChart: number;
 };
+
+type Y = { title: string; values: number[] };
+
+type Point = { y: number; x: number };
 
 const defaultColor = "#000";
 
 export class ChartWrapper {
   #element: ChartItem;
   #chart?: Chart;
-  #yData: number[];
+  #yData: Y[];
   #xData: number[];
   #xTitle?: string;
-  #yTitle?: string;
   #borderColor?: string;
   #maxElements: number;
   #end: number;
   #interval?: number;
-  max: { y: number; x: number };
-  min: { y: number; x: number };
+  max: Point[];
+  min: Point[];
 
   constructor(args: ChartProperties) {
     const {
@@ -33,12 +35,20 @@ export class ChartWrapper {
       xData,
       elementId,
       xTitle,
-      yTitle,
       borderColor,
       maxNumberOfElementsOnChart,
     } = args;
 
-    if (yData.length !== xData.length) {
+    const yLengths = yData.map((data) => data.values.length);
+
+    const minYLength = Math.min(...yLengths);
+    const maxYLength = Math.max(...yLengths);
+
+    if (minYLength !== maxYLength) {
+      throw new Error("Lengths of datasets are not equal");
+    }
+
+    if (minYLength !== xData.length) {
       throw new Error(
         "Data on X axis must be the same length as data on Y axis"
       );
@@ -62,10 +72,17 @@ export class ChartWrapper {
     this.#maxElements = maxNumberOfElementsOnChart;
     this.#end = maxNumberOfElementsOnChart;
     this.#xTitle = xTitle;
-    this.#yTitle = yTitle;
 
-    this.max = this.#getBoundaryValues(xData, yData, "max");
-    this.min = this.#getBoundaryValues(xData, yData, "min");
+    let min: Point[] = [];
+    let max: Point[] = [];
+
+    yData.forEach((data) => {
+      min.push(this.#getBoundaryValues(xData, data.values, "max"));
+      max.push(this.#getBoundaryValues(xData, data.values, "min"));
+    });
+
+    this.min = min;
+    this.max = max;
 
     this.#create();
   }
@@ -92,23 +109,29 @@ export class ChartWrapper {
     }
   }
 
-  #setMinAndMaxValues(xData: number[], yData: number[]) {
-    this.max = this.#getBoundaryValues(xData, yData, "max");
-    this.min = this.#getBoundaryValues(xData, yData, "min");
+  #setMinAndMaxValues(xData: number[], yData: Y[]) {
+    let min: Point[] = [];
+    let max: Point[] = [];
+
+    yData.forEach((data) => {
+      min.push(this.#getBoundaryValues(xData, data.values, "max"));
+      max.push(this.#getBoundaryValues(xData, data.values, "min"));
+    });
+
+    this.min = min;
+    this.max = max;
   }
 
   async #create() {
     const data = {
       labels: this.#xData.slice(0, this.#maxElements),
-      datasets: [
-        {
-          label: this.#yTitle,
-          data: this.#yData.slice(0, this.#maxElements),
-          fill: false,
-          borderColor: this.#borderColor,
-          tension: 0.1,
-        },
-      ],
+      datasets: this.#yData.map((data) => ({
+        label: data.title,
+        data: data.values.slice(0, this.#maxElements),
+        fill: false,
+        borderColor: this.#borderColor,
+        tension: 0.1,
+      })),
     };
 
     const options: ChartOptions = {
@@ -118,9 +141,9 @@ export class ChartWrapper {
           beginAtZero: true,
           title: {
             display: true,
-            text: this.#yTitle,
+            text: "Wartości",
           },
-          ...this.#getMinAndMax(),
+          ...this.getMinAndMax(),
         },
         x: {
           title: {
@@ -153,15 +176,13 @@ export class ChartWrapper {
 
     const data = {
       labels: this.#xData.slice(x - halfOfMaxElements, x + halfOfMaxElements),
-      datasets: [
-        {
-          label: this.#yTitle,
-          data: this.#yData.slice(x - halfOfMaxElements, x + halfOfMaxElements),
-          fill: false,
-          borderColor: this.#borderColor,
-          tension: 0.1,
-        },
-      ],
+      datasets: this.#yData.map((data) => ({
+        label: data.title,
+        data: data.values.slice(0, this.#maxElements),
+        fill: false,
+        borderColor: this.#borderColor,
+        tension: 0.1,
+      })),
     };
 
     this.#chart.data = data;
@@ -180,10 +201,10 @@ export class ChartWrapper {
       labels.shift();
       labels.push(this.#xData[this.#end]);
 
-      for (const dataset of datasets) {
+      datasets.forEach((dataset, index) => {
         dataset.data.shift();
-        dataset.data.push(this.#yData[this.#end]);
-      }
+        dataset.data.push(this.#yData[index].values[this.#end]);
+      });
 
       this.#chart.update();
     }
@@ -199,12 +220,22 @@ export class ChartWrapper {
       xData,
       elementId,
       xTitle,
-      yTitle,
       borderColor,
       maxNumberOfElementsOnChart,
     } = args;
 
-    if (yData.length !== xData.length) {
+    const yLengths = yData.map((data) => data.values.length);
+
+    const minYLength = Math.min(...yLengths);
+    const maxYLength = Math.max(...yLengths);
+
+    console.log(this.#yData, "\n\n", this.#xData, "\n\n", yData, "\n\n", xData);
+
+    if (minYLength !== maxYLength) {
+      throw new Error("Lengths of datasets are not equal");
+    }
+
+    if (minYLength !== xData.length) {
       throw new Error(
         "Data on X axis must be the same length as data on Y axis"
       );
@@ -231,7 +262,6 @@ export class ChartWrapper {
     this.#maxElements = maxNumberOfElementsOnChart;
     this.#end = maxNumberOfElementsOnChart;
     this.#xTitle = xTitle;
-    this.#yTitle = yTitle;
 
     this.#setMinAndMaxValues(xData, yData);
 
@@ -265,22 +295,14 @@ export class ChartWrapper {
     this.#chart?.update();
   }
 
-  updateYTitle(title: string) {
+  updateYTitle(index: number, title: string) {
     if (!this.#chart) {
       throw new Error("Cannot update chart when it is not defined");
     }
 
-    if (title === "") {
-      this.#yTitle = "Odległość [mm]";
-      this.#chart.options.scales.y.title.text = "Odległość [mm]";
-      this.#chart.data.datasets[0].label = "Odległość [mm]";
-    } else {
-      this.#yTitle = title;
-      this.#chart.options.scales.y.title.text = title;
-      this.#chart.data.datasets[0].label = title;
-    }
+    this.#chart.data.datasets[index].label = title;
 
-    this.#chart?.update();
+    this.#chart.update();
   }
 
   stopInterval() {
@@ -312,13 +334,17 @@ export class ChartWrapper {
     }
   }
 
-  #getMinAndMax() {
+  getMinAndMax() {
     let min = Infinity;
     let max = -Infinity;
 
-    for (const value of this.#yData) {
-      if (value < min) min = value;
-      if (value > max) max = value;
+    for (const dataset of this.#yData) {
+      for (const value in dataset.values) {
+        const val = parseInt(value);
+
+        if (val < min) min = val;
+        if (val > max) max = val;
+      }
     }
 
     return {
@@ -327,13 +353,13 @@ export class ChartWrapper {
     };
   }
 
-  // public setSpecificX(x: number): void {
-  //   const index = this.#xData.map((data) => Math.round(data)).indexOf(x);
-  //   if (index !== -1) {
-  //     this.#end = index;
-  //     this.#updateChart();
-  //   } else {
-  //     console.error(`Value ${x} not found in xData`);
-  //   }
-  // }
+  updateMaxYValue(value: number) {
+    this.#chart.options.scales.y.max = value;
+
+    this.#chart?.update();
+  }
+
+  getNumberOfDatasets() {
+    return this.#yData.length;
+  }
 }
