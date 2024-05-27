@@ -185,9 +185,9 @@ h4 {
   width: 100%;
 }
 
-#distance-chart{
-  width: 100%;
-  height: 100%;
+#distance-chart {
+  width: 100% !important;
+  height: 100% !important;
 }
 
 #nav-bar {
