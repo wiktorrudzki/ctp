@@ -55,7 +55,6 @@ h4 {
   cursor: pointer;
 }
 
-
 #sidebar {
   overflow-y: auto;
   width: 300px;
@@ -64,7 +63,6 @@ h4 {
   padding: 15px;
   border-right: 3px solid var(--clr-border);
   background-color: #ffffff;
-
 }
 
 #sidebar::-webkit-scrollbar {
@@ -175,7 +173,7 @@ h4 {
   align-items: center;
 }
 
-.color-picker>fieldset {
+.color-picker > fieldset {
   border: 0;
   width: 100%;
   background: #fff;
@@ -287,7 +285,7 @@ h4 {
 .dark {
   --clr-body-bg: hsl(209 50% 10%);
   --clr-card-bg: hsl(209 50% 5%);
-  --clr-text: hsl(209 50% 90%);
+  --clr-text: hsl(209 20% 60%);
   --clr-heading: hsl(209 50% 80%);
   --clr-button-bg: hsl(209 50% 30%);
   --clr-button-text: white;
@@ -320,26 +318,25 @@ h4 {
 :root:has(#dark:checked) {
   --clr-body-bg: hsl(209 50% 10%);
   --clr-card-bg: hsl(209 50% 5%);
-  --clr-text: hsl(209 50% 90%);
+  --clr-text: hsl(209 20% 60%);
   --clr-heading: hsl(209 50% 80%);
 }
 
-.popup .overlay{
-
+.popup .overlay {
   position: fixed;
   top: 0px;
-  left:0px;
+  left: 0px;
   width: 100vw;
   height: 100vh;
-  background: rgba(0,0,0,0.7);
-  z-index:1; 
-  display:none;
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 1;
+  display: none;
 }
-.popup .content{
+.popup .content {
   position: absolute;
   top: 50%;
   left: 50%;
-  transform: translate(-50%,-50%) scale(0);
+  transform: translate(-50%, -50%) scale(0);
   background: #fff;
   width: 50%;
   max-height: 80%;
@@ -350,14 +347,14 @@ h4 {
   border-radius: 20px;
 }
 
-.popup .close-btn{
+.popup .close-btn {
   position: absolute;
   right: 20px;
   top: 20px;
   width: 30px;
   height: 30px;
   background: #222;
-  color:#fff;
+  color: #fff;
   font-size: 25p;
   line-height: 30px;
   font-weight: 600;
@@ -365,11 +362,11 @@ h4 {
   border-radius: 50%;
 }
 .popip.active .overlay {
-  display:block;
+  display: block;
 }
-.popup.active .content{
-  transition:all 300ms easy-in-out;
-  transform: translate(-50%,-50%) scale(1);
+.popup.active .content {
+  transition: all 300ms easy-in-out;
+  transform: translate(-50%, -50%) scale(1);
 }
 
 #dataPopUp {
@@ -378,7 +375,6 @@ h4 {
   white-space: pre-wrap; /* Zawijanie wierszy */
   display: flex;
   justify-content: center;
-
 }
 
 #dataPopUp::-webkit-scrollbar {
