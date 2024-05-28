@@ -38,9 +38,9 @@ h4 {
     flex-direction: column-reverse;
     width: 100%;
   }
-    #sidebar{
-      width: 100vw !important;
-    }
+  #sidebar {
+    width: 100vw !important;
+  }
 }
 
 @media (min-width: 800px) {
@@ -55,7 +55,8 @@ h4 {
   height: auto;
 }
 
-#y-inputs {
+#y-inputs,
+#variables-input {
   display: flex;
   flex-direction: column;
   position: relative;
@@ -63,6 +64,11 @@ h4 {
   input {
     width: fit-content;
   }
+}
+
+#variables-input > div {
+  display: flex;
+  flex-direction: column;
 }
 
 #file-input {
@@ -133,7 +139,7 @@ h4 {
     width: 100%;
   }
 }
-.options2{
+.options2 {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -145,7 +151,7 @@ h4 {
     width: 100%;
   }
 }
-#actual-file{
+#actual-file {
   display: flex;
   justify-content: center;
   align-items: center;

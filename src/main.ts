@@ -16,6 +16,7 @@ const exportButtonContainer = document.querySelector(".options.export");
 const stopBtn = document.getElementById("stop-chart-btn");
 const startBtn = document.getElementById("start-chart-btn");
 const exportBtn = document.getElementById("export-chart-btn");
+const addDatasetBtn = document.getElementById("add-dataset");
 
 const fileInput = document.getElementById("file-input") as HTMLInputElement;
 const distanceColorInput = document.getElementById(
@@ -127,7 +128,6 @@ const createChart = (data: number[][]) => {
   };
 
   const updateMinMaxValues = () => {
-    console.log("distanceChart.min", distanceChart.min[0].x);
     maxX
       ? (maxX.textContent = distanceChart.max[0].x.toPrecision(4).toString())
       : null;
@@ -166,13 +166,14 @@ const createChart = (data: number[][]) => {
         xData: transposedData[0],
         yData: transposedData
           .slice(1)
-          .map((data) => ({ values: data, title: "Wartości" })),
+          .map((data, i) => ({ values: data, title: "Wartości" + (i + 1) })),
         xTitle: "Argumenty",
         maxNumberOfElementsOnChart,
         borderColor: distanceChart.getBorderColor(),
       });
       updateMinMaxValues();
       generateYInputs();
+      generateVariables();
       resumeChart();
     }
     reader.readAsText(file);
@@ -229,10 +230,86 @@ const createChart = (data: number[][]) => {
 
       input.addEventListener("input", (e) => {
         distanceChart.updateYTitle(i, e.target.value as string);
+
+        generateVariables();
       });
 
       yInputsWrapper.appendChild(document.createElement("br"));
     }
+  };
+
+  const generateVariables = () => {
+    const titles = distanceChart.getDataTitles();
+
+    if (!titles) {
+      return;
+    }
+
+    const container = document.getElementById("variables-input");
+
+    if (!container) {
+      throw new Error("");
+    }
+
+    const variables: string[] = [];
+
+    let existingParagraphs = container.querySelectorAll("p");
+    existingParagraphs.forEach((paragraph) => {
+      paragraph.remove();
+    });
+
+    for (let i = 0; i < titles.length; i++) {
+      let paragraph = document.createElement("p");
+
+      const title = titles[i];
+
+      if (title) {
+        variables.push(title);
+      }
+      paragraph.textContent = "zmienna: " + title || null;
+
+      container.appendChild(paragraph);
+    }
+
+    addDatasetBtn?.addEventListener("click", () => {
+      const newTitle = document.getElementById("new-dataset-title")
+        ?.value as string;
+
+      if (distanceChart.getDataTitles()?.includes(newTitle)) {
+        toastr.error(
+          "Nie można utworzyć serii danych o takim tytule, ponieważ istnieje on już na wykresie"
+        );
+        return;
+      }
+
+      const value = document.getElementById("new-dataset-input")
+        ?.value as string;
+
+      const dataset: number[] = [];
+
+      try {
+        let equationFunction = new Function(
+          ...(titles as string[]),
+          "return " + value
+        );
+
+        const data = distanceChart.getData();
+
+        for (let i = 0; i < data[0].length; i++) {
+          const vals = [];
+
+          for (let j = 0; j < data.length; j++) {
+            vals.push(data[j][i]);
+          }
+
+          dataset.push(equationFunction(...vals));
+        }
+      } catch (e) {
+        console.log("Incomplete function: " + e);
+      }
+
+      distanceChart.addDataset(dataset, newTitle);
+    });
   };
 
   const applySearchByX = () => {
@@ -345,7 +422,7 @@ const createChart = (data: number[][]) => {
     xData: transposedData[0],
     yData: transposedData
       .slice(1)
-      .map((data) => ({ values: data, title: "Wartości" })),
+      .map((data, i) => ({ values: data, title: "Wartości" + (i + 1) })),
     xTitle: "Argumenty",
     maxNumberOfElementsOnChart,
   });
@@ -364,6 +441,8 @@ const createChart = (data: number[][]) => {
   applyOnMaxYValueChange();
 
   generateYInputs();
+
+  generateVariables();
 
   document
     .getElementById("file-review")

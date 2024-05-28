@@ -1,5 +1,6 @@
 import { Chart, ChartConfiguration, ChartItem, ChartOptions } from "chart.js";
 import { isValidHexaCode } from "./validateHex";
+import toastr from "toastr";
 
 type ChartProperties = {
   elementId: string;
@@ -361,5 +362,30 @@ export class ChartWrapper {
 
   getNumberOfDatasets() {
     return this.#yData.length;
+  }
+
+  getDataTitles() {
+    return this.#chart?.data.datasets.map((dataset) => dataset.label);
+  }
+
+  getData() {
+    return this.#yData.map((data) => data.values);
+  }
+
+  addDataset(dataset: number[], title: string) {
+    if (!this.#chart) return;
+
+    this.#yData = [...this.#yData, { title, values: dataset }];
+    this.#chart.data.datasets = this.#yData.map((data) => ({
+      label: data.title,
+      data: data.values.slice(0, this.#maxElements),
+      fill: false,
+      borderColor: this.#borderColor,
+      tension: 0.1,
+    }));
+
+    console.log(this.getData(), this.#yData);
+
+    this.#chart?.update();
   }
 }
