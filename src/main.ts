@@ -239,7 +239,9 @@ const createChart = (data: number[][]) => {
   };
 
   const generateVariables = () => {
-    const titles = distanceChart.getDataTitles();
+    const titles = distanceChart
+      .getDataTitles()
+      ?.concat(distanceChart.getXTitle());
 
     if (!titles) {
       return;
@@ -287,6 +289,8 @@ const createChart = (data: number[][]) => {
 
       const dataset: number[] = [];
 
+      const xData = distanceChart.getXData();
+
       try {
         let equationFunction = new Function(
           ...(titles as string[]),
@@ -301,6 +305,8 @@ const createChart = (data: number[][]) => {
           for (let j = 0; j < data.length; j++) {
             vals.push(data[j][i]);
           }
+
+          vals.push(xData[i]);
 
           dataset.push(equationFunction(...vals));
         }

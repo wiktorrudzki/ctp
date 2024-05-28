@@ -296,6 +296,10 @@ export class ChartWrapper {
     this.#chart?.update();
   }
 
+  getXTitle() {
+    return this.#xTitle;
+  }
+
   updateYTitle(index: number, title: string) {
     if (!this.#chart) {
       throw new Error("Cannot update chart when it is not defined");
@@ -383,8 +387,6 @@ export class ChartWrapper {
       borderColor: this.#borderColor,
       tension: 0.1,
     }));
-
-    console.log(this.getData(), this.#yData);
 
     this.#chart?.update();
   }
