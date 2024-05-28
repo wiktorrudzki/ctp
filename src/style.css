@@ -155,7 +155,7 @@ h4 {
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 300px;
+  max-width: 300px;
 }
 
 .buttons:hover {
@@ -172,7 +172,7 @@ h4 {
   border: 2px solid var(--clr-border);
   border-radius: 5px;
   outline: none;
-  width: 100px;
+  max-width: 100px;
 }
 
 .input:focus {
@@ -379,7 +379,7 @@ h4 {
   position: absolute;
   right: 20px;
   top: 20px;
-  width: 30px;
+  max-width: 30px;
   height: 30px;
   background: #222;
   color: #fff;
@@ -406,7 +406,7 @@ h4 {
 }
 
 #dataPopUp::-webkit-scrollbar {
-  width: 20px;
+  max-width: 20px;
 }
 
 #dataPopUp::-webkit-scrollbar-track {

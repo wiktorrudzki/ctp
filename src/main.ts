@@ -127,19 +127,20 @@ const createChart = (data: number[][]) => {
   };
 
   const updateMinMaxValues = () => {
-    // maxX
-    //   ? (maxX.textContent = distanceChart.max.x.toPrecision(4).toString())
-    //   : null;
-    // maxY
-    //   ? (maxY.textContent = distanceChart.max.y.toPrecision(4).toString())
-    //   : null;
-    // minY
-    //   ? (minY.textContent = distanceChart.min.y.toPrecision(4).toString())
-    //   : null;
-    // minX
-    //   ? (minX.textContent = distanceChart.min.x.toPrecision(4).toString())
-    //   : null;
-    // TODO obliczyć max i min dla każdego wykresu
+    console.log("distanceChart.min", distanceChart.min[0].x);
+    maxX
+      ? (maxX.textContent = distanceChart.max[0].x.toPrecision(4).toString())
+      : null;
+    maxY
+      ? (maxY.textContent = distanceChart.max[0].y.toPrecision(4).toString())
+      : null;
+    minY
+      ? (minY.textContent = distanceChart.min[0].y.toPrecision(4).toString())
+      : null;
+    minX
+      ? (minX.textContent = distanceChart.min[0].x.toPrecision(4).toString())
+      : null;
+    //TODO obliczyć max i min dla każdego wykresu
   };
 
   function readFile(file: Blob) {
