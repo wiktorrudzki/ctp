@@ -133,7 +133,24 @@ h4 {
     width: 100%;
   }
 }
+.options2{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  padding-bottom: 20px;
 
+  button {
+    background-color: var(--clr-button-bg);
+    width: 100%;
+  }
+}
+#actual-file{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
 .export {
   width: 100%;
 }
