@@ -504,6 +504,7 @@ const createChart = (data: number[][]) => {
   fileInput?.addEventListener("change", function (e) {
     if (e.target) {
       readFile((e.target as any).files[0]);
+      document.getElementById("file-size").innerText = (e.target as any).files[0].size/1000.+'KB';
     }
 
     if (title) {
