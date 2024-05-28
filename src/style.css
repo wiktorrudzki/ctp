@@ -440,3 +440,14 @@ h4 {
   background: var(--clr-border);
   border-radius: 8px;
 }
+
+.example{
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items:center;
+
+}
+.example td{
+  width: 2vw;
+}

@@ -17,6 +17,7 @@ const stopBtn = document.getElementById("stop-chart-btn");
 const startBtn = document.getElementById("start-chart-btn");
 const exportBtn = document.getElementById("export-chart-btn");
 const addDatasetBtn = document.getElementById("add-dataset");
+let openInfo:boolean = false;
 
 const fileInput = document.getElementById("file-input") as HTMLInputElement;
 const distanceColorInput = document.getElementById(
@@ -449,6 +450,29 @@ const createChart = (data: number[][]) => {
   generateYInputs();
 
   generateVariables();
+
+  document
+    .getElementById("file-input-label")
+    ?.addEventListener("mouseenter", function () {
+      if (openInfo == true) { return; }
+      openInfo = true;
+      document.getElementById("popup-2").classList.toggle("active");
+      setTimeout(function () { document.getElementById("popup-2").classList.toggle("active"); }, 4000);
+      let licznikDiv = document.getElementById("licznik");
+      let licznik = 4;
+      licznikDiv.innerText = licznik.toString();
+      let interval = setInterval(function(){
+        licznik--;
+        licznikDiv.innerText = licznik.toString();
+        if (licznik === 0) {
+          openInfo = false;
+          clearInterval(interval);
+        }
+        },1000);
+        
+    });
+    
+  
 
   document
     .getElementById("file-review")
