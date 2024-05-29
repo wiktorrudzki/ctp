@@ -276,9 +276,13 @@ export class ChartWrapper {
   updateBorderColor(color: string) {
     if (isValidHexaCode(color) && this.#chart) {
       this.#borderColor = color;
-      this.#chart.data.datasets = [
-        { ...this.#chart?.data.datasets[0], borderColor: color },
-      ];
+      this.#chart.data.datasets.forEach((dataset, index) => {
+        this.#chart.data.datasets[index] = {
+          ...dataset,
+          borderColor: color,
+        };
+      });
+
     } else {
       console.error("Wrong color provided: " + color);
     }
