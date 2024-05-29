@@ -29,6 +29,7 @@ export class ChartWrapper {
   #interval?: number;
   max: Point[];
   min: Point[];
+  #intervalTime = 2;
 
   constructor(args: ChartProperties) {
     const {
@@ -316,11 +317,17 @@ export class ChartWrapper {
   }
 
   startInterval() {
+    this.stopInterval();
     if (!this.#interval)
       this.#interval = setInterval(() => {
         this.#setEndAfterChartFilled();
         this.#updateChart();
-      }, 2);
+      }, this.#intervalTime);
+  }
+
+  setUpdateIntervalTime(newIntervalTime: any) {
+    this.#intervalTime = newIntervalTime;
+    this.startInterval();
   }
 
   setSpecificX(x: number) {
@@ -338,7 +345,7 @@ export class ChartWrapper {
       this.#end = 0;
     }
   }
-
+  
   getMinAndMax() {
     let min = Infinity;
     let max = -Infinity;

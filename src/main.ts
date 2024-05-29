@@ -525,6 +525,13 @@ const createChart = (data: number[][]) => {
 
   startBtn?.addEventListener("click", resumeChart);
 
+  const maxInterval = 100;
+  document.getElementById('range-input').addEventListener('input', function () {
+    const rangeValue = parseInt(this.value, 10);
+    const newIntervalTime = maxInterval - rangeValue;
+    distanceChart.setUpdateIntervalTime(newIntervalTime);
+  });
+
   fileInput?.addEventListener("change", function (e) {
     if (e.target) {
       readFile((e.target as any).files[0]);
