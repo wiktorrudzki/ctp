@@ -29,7 +29,7 @@ export class ChartWrapper {
   #interval?: number;
   max: Point[];
   min: Point[];
-  #intervalTime = 2;
+  #intervalTime = 98;
 
   constructor(args: ChartProperties) {
     const {
