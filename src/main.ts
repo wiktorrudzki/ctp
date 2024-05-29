@@ -18,7 +18,7 @@ const startBtn = document.getElementById("start-chart-btn");
 const exportBtn = document.getElementById("export-chart-btn");
 const addDatasetBtn = document.getElementById("add-dataset");
 let openInfo:boolean = false;
-
+let yData: any[];
 const fileInput = document.getElementById("file-input") as HTMLInputElement;
 const distanceColorInput = document.getElementById(
   "distance-color"
@@ -116,6 +116,7 @@ function transpose(list: number[][]) {
 }
 
 const createChart = (data: number[][]) => {
+  
   const resumeChart = () => {
     distanceChart.startInterval();
     startBtn?.setAttribute("disabled", "disabled");
@@ -127,7 +128,7 @@ const createChart = (data: number[][]) => {
     stopBtn?.setAttribute("disabled", "disabled");
     startBtn?.removeAttribute("disabled");
   };
-
+  
   const updateMinMaxValues = () => {
     maxX
       ? (maxX.textContent = distanceChart.max[0].x.toPrecision(4).toString())
@@ -285,32 +286,32 @@ const createChart = (data: number[][]) => {
         return;
       }
 
-      const value = document.getElementById("new-dataset-input")
-        ?.value as string;
-
-      const dataset: number[] = [];
+      const value = document.getElementById("new-dataset-input")?.value as string;
 
       const xData = distanceChart.getXData();
+      const data = distanceChart.getData();
+      const yData = distanceChart.getYData();
 
       try {
         let equationFunction = new Function(
-          ...(titles as string[]),
+          ...(distanceChart.getDataTitles() as string[]).concat(distanceChart.getXTitle() as string),
           "return " + value
         );
 
-        const data = distanceChart.getData();
+        const dataset: number[] = [];
 
-        for (let i = 0; i < data[0].length; i++) {
-          const vals = [];
-
-          for (let j = 0; j < data.length; j++) {
-            vals.push(data[j][i]);
+        yData.forEach((y, index) => {
+          for (let i = 0; i < xData.length; i++) {
+            const vals = [];
+            for (let j = 0; j < data.length; j++) {
+              vals.push(data[j][i]);
+            }
+            vals.push(y.values[i]);
+            dataset.push(equationFunction(...vals));
           }
+        });
 
-          vals.push(xData[i]);
-
-          dataset.push(equationFunction(...vals));
-        }
+        distanceChart.addDataset(dataset, newTitle);
       } catch (e) {
         console.log("Incomplete function: " + e);
       }

@@ -92,6 +92,9 @@ export class ChartWrapper {
   getXData() {
     return this.#xData;
   }
+  getYData(){
+    return this.#yData;
+  }
 
   #getBoundaryValues(
     xData: number[],
