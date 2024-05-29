@@ -155,7 +155,7 @@ const createChart = (data: number[][]) => {
         // jakies byle co wrzucilem na razie
         throw new Error("error");
       }
-
+      document.getElementById("popup-2").classList.remove("active");
       fileContent = e.target.result as string;
       const data = formatData(e.target.result as string);
       formatedData = formatData(e.target.result as string);
@@ -455,25 +455,14 @@ const createChart = (data: number[][]) => {
   document
     .getElementById("file-input-label")
     ?.addEventListener("mouseenter", function () {
-      if (openInfo == true) { return; }
-      openInfo = true;
-      document.getElementById("popup-2").classList.toggle("active");
-      setTimeout(function () { document.getElementById("popup-2").classList.toggle("active"); }, 4000);
-      let licznikDiv = document.getElementById("licznik");
-      let licznik = 4;
-      licznikDiv.innerText = licznik.toString();
-      let interval = setInterval(function(){
-        licznik--;
-        licznikDiv.innerText = licznik.toString();
-        if (licznik === 0) {
-          openInfo = false;
-          clearInterval(interval);
-        }
-        },1000);
-        
+      document.getElementById("popup-2").classList.add("active");
     });
     
-  
+  document
+    .getElementById("file-input-label")
+    ?.addEventListener("mouseleave", function () {
+      document.getElementById("popup-2").classList.remove("active");
+    });
 
   document
     .getElementById("file-review")
